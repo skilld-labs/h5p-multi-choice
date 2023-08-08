@@ -47,12 +47,12 @@ var H5P = H5P || {};
  * @param {Options} options
  * @param {number} contentId
  * @param {Object} contentData
- * @returns {H5P.MultiChoice}
+ * @returns {H5P.SkilldMultiChoice}
  * @constructor
  */
-H5P.MultiChoice = function (options, contentId, contentData) {
-  if (!(this instanceof H5P.MultiChoice))
-    return new H5P.MultiChoice(options, contentId, contentData);
+H5P.SkilldMultiChoice = function (options, contentId, contentData) {
+  if (!(this instanceof H5P.SkilldMultiChoice))
+    return new H5P.SkilldMultiChoice(options, contentId, contentData);
   var self = this;
   this.contentId = contentId;
   this.contentData = contentData;
@@ -172,11 +172,11 @@ H5P.MultiChoice = function (options, contentId, contentData) {
    */
   var addFeedback = function ($element, feedback) {
     $feedbackDialog = $('' +
-    '<div class="h5p-feedback-dialog">' +
+      '<div class="h5p-feedback-dialog">' +
       '<div class="h5p-feedback-inner">' +
-        '<div class="h5p-feedback-text">' + feedback + '</div>' +
+      '<div class="h5p-feedback-text">' + feedback + '</div>' +
       '</div>' +
-    '</div>');
+      '</div>');
 
     //make sure feedback is only added once
     if (!$element.find($('.h5p-feedback-dialog')).length) {
@@ -198,9 +198,7 @@ H5P.MultiChoice = function (options, contentId, contentData) {
           self.setImage(media.params.file.path, {
             disableImageZooming: params.media.disableImageZooming || false,
             alt: media.params.alt,
-            title: media.params.title,
-            expandImage: media.params.expandImage,
-            minimizeImage: media.params.minimizeImage
+            title: media.params.title
           });
         }
       }
@@ -239,14 +237,15 @@ H5P.MultiChoice = function (options, contentId, contentData) {
       $('<li>', {
         'class': 'h5p-answer',
         role: answer.role,
+        'order-id': answer.originalOrder,
         tabindex: answer.tabindex,
         'aria-checked': answer.checked,
         'data-id': i,
         html: '<div class="h5p-alternative-container"><span class="h5p-alternative-inner">' + answer.text + '</span></div>',
         appendTo: $myDom
       });
-    }  
-    
+    }
+
     self.setContent($myDom, {
       'class': params.behaviour.singleAnswer ? 'h5p-radio' : 'h5p-check'
     });
@@ -289,10 +288,10 @@ H5P.MultiChoice = function (options, contentId, contentData) {
       });
 
       var tipIconHtml = '<span class="joubel-icon-tip-normal">' +
-                          '<span class="h5p-icon-shadow"></span>' +
-                          '<span class="h5p-icon-speech-bubble"></span>' +
-                          '<span class="h5p-icon-info"></span>' +
-                        '</span>';
+        '<span class="h5p-icon-shadow"></span>' +
+        '<span class="h5p-icon-speech-bubble"></span>' +
+        '<span class="h5p-icon-info"></span>' +
+        '</span>';
 
       $multichoiceTip.append(tipIconHtml);
 
@@ -552,7 +551,7 @@ H5P.MultiChoice = function (options, contentId, contentData) {
         '.h5p-solution-icon-radio, ' +
         '.h5p-solution-icon-checkbox, ' +
         '.h5p-feedback-dialog')
-        .remove();
+      .remove();
   };
 
   /**
@@ -698,21 +697,21 @@ H5P.MultiChoice = function (options, contentId, contentData) {
 
       if (params.behaviour.randomAnswers) {
         // reshuffle answers
-       var oldIdMap = idMap;
-       idMap = getShuffleMap();
-       var answersDisplayed = $myDom.find('.h5p-answer');
-       // remember tips
-       var tip = [];
-       for (i = 0; i < answersDisplayed.length; i++) {
-         tip[i] = $(answersDisplayed[i]).find('.h5p-multichoice-tipwrap');
-       }
-       // Those two loops cannot be merged or you'll screw up your tips
-       for (i = 0; i < answersDisplayed.length; i++) {
-         // move tips and answers on display
-         $(answersDisplayed[i]).find('.h5p-alternative-inner').html(params.answers[i].text);
-         $(tip[i]).detach().appendTo($(answersDisplayed[idMap.indexOf(oldIdMap[i])]).find('.h5p-alternative-container'));
-       }
-     }
+        var oldIdMap = idMap;
+        idMap = getShuffleMap();
+        var answersDisplayed = $myDom.find('.h5p-answer');
+        // remember tips
+        var tip = [];
+        for (i = 0; i < answersDisplayed.length; i++) {
+          tip[i] = $(answersDisplayed[i]).find('.h5p-multichoice-tipwrap');
+        }
+        // Those two loops cannot be merged or you'll screw up your tips
+        for (i = 0; i < answersDisplayed.length; i++) {
+          // move tips and answers on display
+          $(answersDisplayed[i]).find('.h5p-alternative-inner').html(params.answers[i].text);
+          $(tip[i]).detach().appendTo($(answersDisplayed[idMap.indexOf(oldIdMap[i])]).find('.h5p-alternative-container'));
+        }
+      }
     }, false, {
       'aria-label': params.UI.a11yRetry,
     }, {
@@ -822,7 +821,7 @@ H5P.MultiChoice = function (options, contentId, contentData) {
       'tabindex': '-1'
     }).removeAttr('role')
       .removeAttr('aria-checked');
-    
+
     $('.h5p-answers').removeAttr('role');
   };
 
@@ -1059,9 +1058,9 @@ H5P.MultiChoice = function (options, contentId, contentData) {
     }
   }
 
-  H5P.MultiChoice.counter = (H5P.MultiChoice.counter === undefined ? 0 : H5P.MultiChoice.counter + 1);
+  H5P.SkilldMultiChoice.counter = (H5P.SkilldMultiChoice.counter === undefined ? 0 : H5P.SkilldMultiChoice.counter + 1);
   params.role = (params.behaviour.singleAnswer ? 'radiogroup' : 'group');
-  params.labelId = 'h5p-mcq' + H5P.MultiChoice.counter;
+  params.labelId = 'h5p-mcq' + H5P.SkilldMultiChoice.counter;
 
   /**
    * Pack the current state of the interactivity into a object that can be
@@ -1105,5 +1104,5 @@ H5P.MultiChoice = function (options, contentId, contentData) {
   };
 };
 
-H5P.MultiChoice.prototype = Object.create(H5P.Question.prototype);
-H5P.MultiChoice.prototype.constructor = H5P.MultiChoice;
+H5P.SkilldMultiChoice.prototype = Object.create(H5P.Question.prototype);
+H5P.SkilldMultiChoice.prototype.constructor = H5P.SkilldMultiChoice;
